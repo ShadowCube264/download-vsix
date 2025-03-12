@@ -1,0 +1,26 @@
+{
+
+  "description": "Download button for .vsix files from the Visual Studio Marketplace.",
+  "manifest_version": 2,
+  "name": "Download .vsix",
+  "version": "1.0",
+  "homepage_url": "https://github.com/ShadowCube264/download-vsix",
+  "icons": {
+    "48": "icons/dl-vsix-48.png"
+  },
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "page_action": {
+    "default_icon": "icons/dl-vsix-32.png",
+    "default_title": "Download .vsix",
+    "show_matches": ["https://marketplace.visualstudio.com/items?*"]
+  },
+
+  "permissions": [
+    "activeTab"
+  ]
+
+}
