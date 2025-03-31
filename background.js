@@ -2,7 +2,7 @@ let author;
 let package;
 
 //If link matches, open a download link
-function onButtonClick(tab) {
+async function onButtonClick(tab) {
   let url = URL.parse(tab.url);
   let path = url.hostname + url.pathname;
 
@@ -14,8 +14,33 @@ function onButtonClick(tab) {
     {
       [author, package] = params.get("itemName").split(".");
       prompt("sometext","defaultText");
-      //Get latest version from page HTML
-      browser.tabs.executeScript({file: "/grab-version.js"}).then(openDownload);
+
+      //Get latest version from API
+      const versionRequest = await fetch("https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1", {
+        method: "POST",
+        body: JSON.stringify({
+          filters:[{
+            pageNumber:1,
+            pageSize:1,
+            criteria:[{
+              filterType: 7, //Filter by name
+              value: `${author}.${package}`
+            }]
+          }],
+          assetTypes: [], //Shouldn't be needed
+          flags: 1 //Include version info
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      if (versionRequest.ok) {
+        const requestJson = await versionRequest.json();
+        console.log(requestJson);
+        const versions = requestJson.results[0].extensions[0].versions;
+        const latestVersion = versions[0].version;
+        openDownload(latestVersion);
+      }
     }
   }
 }
